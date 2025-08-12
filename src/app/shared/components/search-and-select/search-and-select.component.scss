@@ -1,6 +1,6 @@
 ion-chip {
     margin: 10px;
-    height: 38px;
+    height: auto;
     border-radius: 25px;
 }
 .head-label{
@@ -39,4 +39,7 @@ ion-chip {
     &::part(content) {
       width: 300px;
     }
+  }
+  .white-spc{
+    white-space: normal;
   }
