@@ -208,7 +208,7 @@ export class SessionDetailPage implements OnInit {
               this.router.navigate([CommonRoutes.CREATE_SESSION], { queryParams: { id: this.id , type: 'segment'} });
             }
           }
-        ])
+        ], 'toastZindex1')
     } 
     this.dismissWhenBack = true;
   }
@@ -338,7 +338,7 @@ export class SessionDetailPage implements OnInit {
       }
     }).catch(error => { })
   }
-  showToasts(message: any,duration : any, toastButton : any){
+  showToasts(message: any,duration : any, toastButton : any, cssclass? : any){
     let texts;
         this.translate.get([message]).subscribe(resp =>{
           texts = resp;
@@ -347,7 +347,7 @@ export class SessionDetailPage implements OnInit {
             message: texts[message],
             // color: "danger",
             buttons: toastButton,
-            cssClass: 'custom-toast'
+            cssClass: `custom-toast ${cssclass}` 
         }).then((toastData) => {
       
       toastData.present();
