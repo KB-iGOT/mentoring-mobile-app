@@ -308,6 +308,9 @@ ion-toast.custom-toast{
   color: var(--ion-color-secondary);
 }
 
+ion-toast.toastZindex1{
+  z-index: 1 !important;
+}
 @media (max-width: 991px) {
   .hide-on-small-screen {
     display: none;
