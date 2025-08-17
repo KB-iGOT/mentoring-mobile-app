@@ -245,7 +245,7 @@ export class SessionDetailPage implements OnInit {
   }
 
   async share() {
-    if(this.isMobile && navigator.share){
+    if(this.isMobile){
       if(this.id){
           let url = `/${CommonRoutes.SESSIONS_DETAILS}/${this.id}`;
           let link = await this.utilService.getDeepLink(url);
