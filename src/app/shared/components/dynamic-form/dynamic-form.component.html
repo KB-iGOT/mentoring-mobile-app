@@ -94,7 +94,7 @@
           [max]="maxDate"
           autocomplete="new-password"
           [disabled]="control?.disabled"
-          (focus)="isMobile && $event.target.blur()" 
+          (focus)="onFocus($event)"
           (dateChange)="dateSelected($event, control)"
           (click)="!isMobile && dateInputClick(control,picker)">
           <mat-datepicker-toggle matSuffix (click)="dateInputClick(control,picker)">
