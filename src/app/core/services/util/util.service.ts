@@ -9,7 +9,9 @@ import { BehaviorSubject, Subject } from 'rxjs';
 import * as Papa from 'papaparse';
 import { LocalStorageService } from '../localstorage.service';
 import { environment } from 'src/environments/environment';
+import { Clipboard } from '@capacitor/clipboard';
 
+import { ToastService } from '../toast.service';
 @Injectable({
   providedIn: 'root',
 })
@@ -28,7 +30,9 @@ export class UtilService {
     private modalCtrl: ModalController,
     private alert: AlertController,
     private translate: TranslateService,
-    private localstorage:LocalStorageService
+    private localstorage:LocalStorageService,
+    private toast: ToastService,
+
   ) {
     const browser = Bowser.getParser(window.navigator.userAgent);
   }
@@ -37,14 +41,31 @@ export class UtilService {
     return environment.deepLinkUrl+url;
   }
 
-  async shareLink(param:ISocialSharing) {
-    let {text,subject,link} = param;
-    await Share.share({
-      text: text,
-      url: link,
-      dialogTitle: subject,
-    });
+  async shareLink(param: ISocialSharing) {
+    let { text, subject, link } = param;
+    try {
+      if ((window as any).FlutterChannel) {
+      (window as any).FlutterChannel.postMessage(
+        {
+          type: "share",
+          title:text,
+          url: link,
+        },
+      );
+    }else{
+      await this.copyToClipBoard(window.location.href)
+      this.toast.showToast("LINK_COPIED","success")
+    }
+    } catch (err) {
+    }
   }
+  copyToClipBoard = async (copyData: any) => {
+    await Clipboard.write({
+      string: copyData
+    }).then(()=>{
+      this.toast.showToast('Copied successfully',"success");
+    });
+  };
 
   async openModal(componentProps) {
     this.modal = await this.modalCtrl.create({
@@ -109,7 +130,7 @@ export class UtilService {
         texts = data;
       });
     let buttons = []
-    let isMobile = this.isMobile()
+    let isMobile = this.isMobile();
     let removeCurrentPhotoValid = (profileImageData.image) ? true:false;
     switch (removeCurrentPhotoValid){
       case true:
@@ -186,14 +207,34 @@ export class UtilService {
     Papa.parse(rawCSVData, {
       complete: (result) => {
         const csvContent = Papa.unparse(result.data);
-        const blob = new Blob([csvContent], { type: 'text/csv' });
-        const downloadLink = document.createElement('a');
-        downloadLink.href = window.URL.createObjectURL(blob);
-        downloadLink.download = fileName;
-        document.body.appendChild(downloadLink);
-        downloadLink.click();
-        document.body.removeChild(downloadLink);
-      }
+  
+        const downloadCSV = () => {
+          const blob = new Blob([csvContent], { type: 'text/csv' });
+          const downloadLink = document.createElement('a');
+          downloadLink.href = window.URL.createObjectURL(blob);
+          downloadLink.download = fileName;
+          document.body.appendChild(downloadLink);
+          downloadLink.click();
+          document.body.removeChild(downloadLink);
+        };
+  
+        try {
+          if (this.isMobile() && (window as any).FlutterChannel) {
+            (window as any).FlutterChannel.postMessage({
+              channel: "FlutterChannel",
+              type: "download",
+              title: fileName,
+              url: result.data,
+              fileType: "text/csv",
+            });
+          } else {
+            downloadCSV();
+          }
+        } catch (err) {
+          console.error("Error posting message to Flutter:", err);
+          downloadCSV(); // fallback to browser download
+        }
+      },
     });
   }
 
