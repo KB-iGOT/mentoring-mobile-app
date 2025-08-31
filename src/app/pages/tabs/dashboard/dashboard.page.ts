@@ -1,6 +1,6 @@
 import * as _ from 'lodash';
 import { BIG_NUMBER_DASHBOARD_FORM , DASHBOARD_TABLE_META_KEYS} from 'src/app/core/constants/formConstant';
-import { HttpService } from 'src/app/core/services';
+import { HttpService, UtilService } from 'src/app/core/services';
 import { FormService } from 'src/app/core/services/form/form.service';
 import * as moment from 'moment';
 import { urlConstants } from 'src/app/core/constants/urlConstants';
@@ -8,6 +8,7 @@ import { Component, OnInit } from '@angular/core';
 import { ProfileService } from 'src/app/core/services/profile/profile.service';
 import { environment } from 'src/environments/environment';
 import { TranslateService } from '@ngx-translate/core';
+
 @Component({
   selector: 'app-dashboard',
   templateUrl: 'dashboard.page.html',
@@ -50,11 +51,15 @@ export class DashboardPage implements OnInit {
   chartBodyPayload: any;
   metaKeys =DASHBOARD_TABLE_META_KEYS;
   translatedChartConfig:any;
+  public isMobile:any;
   constructor(
     private profile: ProfileService,
     private apiService: HttpService,
     private form: FormService,
-    private translate : TranslateService) { }
+    private translate : TranslateService,
+    private utilService:UtilService) {
+      this.isMobile = utilService.isMobile()
+     }
 
   
   ionViewWillEnter() {
@@ -88,6 +93,24 @@ export class DashboardPage implements OnInit {
   };
   async downloadData() {
     this.tableDataDownload = true;
+  }
+
+  downloadCSV(data){
+    try {
+      console.log(this.isMobile," ---- Downloading CSV 100:", data);
+      if (this.isMobile && (window as any).FlutterChannel) {
+      console.log("Downloading CSV 102:", data);
+        (window as any).FlutterChannel.postMessage({
+          channel: "FlutterChannel",
+          type: "download",
+          title: data.fileName,
+          url: data.url,
+          fileType: "text/csv",
+        });
+      }
+    } catch (err) {
+      console.error("Error posting message to Flutter:", err);
+    }
   }
 
   async initialDuration(){
