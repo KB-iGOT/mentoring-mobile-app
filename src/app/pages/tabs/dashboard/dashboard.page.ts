@@ -97,7 +97,7 @@ export class DashboardPage implements OnInit {
 
   downloadCSV(data){
     try {
-      console.log(this.isMobile," ---- Downloading CSV 100:", data);
+      console.log(this.isMobile," ---- Downloading CSV 100:", data.url,"100 --->", data.fileName);
       if (this.isMobile && (window as any).FlutterChannel) {
       console.log("Downloading CSV 102:", data);
         (window as any).FlutterChannel.postMessage({
