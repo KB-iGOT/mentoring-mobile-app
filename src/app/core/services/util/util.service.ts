@@ -204,10 +204,10 @@ export class UtilService {
   }
 
   parseAndDownloadCSV(rawCSVData: string, fileName: string): void {
+    console.log("207", rawCSVData, "file name", fileName);
     Papa.parse(rawCSVData, {
       complete: (result) => {
         const csvContent = Papa.unparse(result.data);
-  
         const downloadCSV = () => {
           const blob = new Blob([csvContent], { type: 'text/csv' });
           const downloadLink = document.createElement('a');
@@ -217,9 +217,10 @@ export class UtilService {
           downloadLink.click();
           document.body.removeChild(downloadLink);
         };
-  
         try {
+              console.log("221 in try");
           if (this.isMobile() && (window as any).FlutterChannel) {
+            console.log("223 after condition");
             (window as any).FlutterChannel.postMessage({
               channel: "FlutterChannel",
               type: "download",
@@ -228,9 +229,11 @@ export class UtilService {
               fileType: "text/csv",
             });
           } else {
+            console.log("232 in else");
             downloadCSV();
           }
         } catch (err) {
+          console.log("235 catch");
           console.error("Error posting message to Flutter:", err);
           downloadCSV(); // fallback to browser download
         }
