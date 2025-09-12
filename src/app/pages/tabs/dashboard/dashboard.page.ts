@@ -312,7 +312,7 @@ export class DashboardPage implements OnInit {
       `&session_type=${this.session_type}` +
       `&start_date=${this.startDateEpoch || ''}` +
       `&end_date=${this.endDateEpoch || ''}` +
-      `&groupBy=${this.groupBy}`;
+      `&group_by=${this.groupBy}`;
     const params = `${urlConstants.API_URLS.DASHBOARD_REPORT_DATA}` +
       `report_code=${this.report_code}${queryParams}`;
     this.chartBodyPayload =  this.entityTypes ? { entityTypes: this.entityTypes}: {};
@@ -339,7 +339,7 @@ export class DashboardPage implements OnInit {
     `&session_type=${this.session_type}` +
     `&start_date=${this.startDateEpoch || ''}` +
     `&end_date=${this.endDateEpoch || ''}` +
-    `&groupBy=${this.groupBy}`;
+    `&group_by=${this.groupBy}`;
   this.chartBody.chartUrl = this.chartBodyConfig.chartUrl;
   this.chartBodyPayload = this.entityTypes ? { entityTypes: this.entityTypes} : {};
   setTimeout(() => {
