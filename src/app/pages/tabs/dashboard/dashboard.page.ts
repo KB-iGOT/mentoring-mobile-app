@@ -95,17 +95,13 @@ export class DashboardPage implements OnInit {
     this.tableDataDownload = true;
   }
 
-  downloadCSV(data){
-    try {
-      console.log(this.isMobile," ---- Downloading CSV 100:", data.url,"100 --->", data.fileName);
-      if (data.fileName?.toLowerCase().endsWith('.csv')) {
-        data.fileName = data.fileName.replace(/\.csv$/i, '');
-      }
-      console.log(data.url,"104 --->", data.fileName);
-      this.utilService.parseAndDownloadCSV(data.url, data.fileName);
-    } catch (err) {
-      console.error("Error posting message to Flutter:", err);
-    }
+  downloadCSV(data: { url: string; fileName: string }) {
+    console.log(this.isMobile, "---- Downloading 99:", data.url, "100 --->", data.fileName);
+    let fileName = data.fileName?.toLowerCase().endsWith('.csv')
+      ? data.fileName.slice(0, -4)
+      : data.fileName;
+    console.log(data.url, "104 --->", fileName);
+    this.utilService.parseAndDownloadCSV(data.url, fileName + ".csv");
   }
 
   async initialDuration(){
