@@ -247,8 +247,17 @@ export class HttpService {
   }
 
   async triggerLogoutConfirmationAlert(result) {
+
     if(await this.modalController.getTop()) {
       await this.modalController.dismiss()
+    }
+   let token = await this.getToken();
+    if(!token && environment.isAuthBypassed) {
+      if(environment.isAuthBypassed) {
+        let auth = this.injector.get(AuthService);
+        auth.clearLocalData();
+        location.href = environment.unauthorizedRedirectUrl
+      }
     }
     let msg = result.data.message;
     if (result && !this.isAlertOpen) {
