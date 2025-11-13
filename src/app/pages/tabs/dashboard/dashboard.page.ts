@@ -96,10 +96,7 @@ export class DashboardPage implements OnInit {
   }
 
   downloadCSV(data: { url: string; fileName: string }) {
-    let fileName = data.fileName?.toLowerCase().endsWith('.csv')
-      ? data.fileName.slice(0, -4)
-      : data.fileName;
-    this.utilService.parseAndDownloadCSV(data.url, fileName + ".csv");
+    this.utilService.downloadCSVFile(data.url, data.fileName);
   }
 
   async initialDuration(){

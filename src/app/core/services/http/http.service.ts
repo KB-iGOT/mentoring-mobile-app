@@ -212,7 +212,7 @@ export class HttpService {
 
   public handleError(result) {
     if(result.data.responseCode == 'UNAUTHORIZED') {
-      this.triggerLogoutConfirmationAlert(result)
+    this.handleUnauthorized(result);
     }
     let msg = result.data.message;
     switch (result.status) {
@@ -225,8 +225,7 @@ export class HttpService {
       case 401:
       case 419:
       case 302:
-          this.triggerLogoutConfirmationAlert(result)
-
+          this.handleUnauthorized(result);
         break
       default:
         this.toastService.showToast(msg ? msg : 'SOMETHING_WENT_WRONG', 'danger')
@@ -260,7 +259,7 @@ export class HttpService {
         });
         this.isAlertOpen = true;
       const alert = await this.alert.create({
-        message: msg || 'Session expired. Please login again',
+        message: msg || 'Your access has timed out. Please log in again',
         buttons: [
           {
             text: texts['OK'],
@@ -308,5 +307,20 @@ export class HttpService {
           return data;
         }
       });
+  }
+  private async handleUnauthorized(result: any) {
+    const isLoggedIn = localStorage.getItem('login') === 'true';
+    console.log(isLoggedIn,"isLoggedIn");
+    const auth = this.injector.get(AuthService);
+    if (isLoggedIn) {
+      this.triggerLogoutConfirmationAlert(result);
+      return;
+    }
+    if (environment.isAuthBypassed) {
+      auth.clearLocalData();
+      location.href = environment.unauthorizedRedirectUrl;
+    } else {
+      auth.logoutAccount(true);
+    }
   }
 }
