@@ -1,4 +1,4 @@
-FROM node:17 AS build
+FROM node:22 AS build
 
 WORKDIR /app
 
@@ -19,7 +19,7 @@ RUN ionic build --prod
 # ==============================
 # FINAL IMAGE 
 # ==============================
-FROM node:17 AS final
+FROM node:22 AS final
 
 # Create non-root user
 RUN useradd -m appuser
